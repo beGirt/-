@@ -15,7 +15,7 @@ public class ExamFrame extends BaseFrame {
 //    private QuestionService questionService = new QuestionServiceImpl();
     private ExamController examController = new ExamController();
 
-    private String[] answers;
+    private String[] answers;       /*答案数组下标从0开始*/
     private int score;
 
     public ExamFrame() {
@@ -215,29 +215,39 @@ public class ExamFrame extends BaseFrame {
 
     @Override
     protected void addListener() {
-//        ExamController examController = new ExamController();
-
-
-
-        nextButton.addActionListener(new ActionListener() {
+        ActionListener pageButton = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int i = Integer.parseInt(currentNumField.getText()) + 1;
+                JButton jButton = (JButton) e.getSource();
 
-                PageMessage pageMessage = examController.toPage(i);
-                ExamFrame.this.showPageMsg(pageMessage,i);
-            }
-        });
+                int i;
 
-        preButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int i = Integer.parseInt(currentNumField.getText()) - 1;
+                if (jButton.getText().equals("上一题")){
+                    i = Integer.parseInt(currentNumField.getText()) - 1;
+                } else if (jButton.getText().equals("下一题")){
+                    i = Integer.parseInt(currentNumField.getText()) + 1;
+                } else {
+                    i = 1;
+                }
+
                 PageMessage pageMessage = examController.toPage(i);
                 ExamFrame.this.showPageMsg( pageMessage, i );
+                showChoice();
             }
-        });
+        };
+        ActionListener optionListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ExamFrame.this.clear_OP_Button();
+                JButton jButton = (JButton) e.getSource();      /*可获取到调用事件的源对象*/
+                jButton.setBackground(Color.yellow);
+                int num = Integer.parseInt(currentNumField.getText());
+                answers[num-1] = jButton.getText();
+            }
+        };
 
+        nextButton.addActionListener(pageButton);
+        preButton.addActionListener(pageButton);
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -245,36 +255,27 @@ public class ExamFrame extends BaseFrame {
                 if (response == 0){
                     int score = ExamFrame.this.checkAnswer();
 
-                    /*存储学生成绩到数据库*/
+                    /*
+                    * 存储学生成绩到数据库*/
+
+
 
                     JOptionPane.showMessageDialog(ExamFrame.this,"提交成功,成绩为:"+score);
                     ExamFrame.this.setVisible(false);
+                    System.exit(0);
                 }
             }
         });
-//        aButton.addActionListener();
-
-//        submitButton.addActionListener();
-
-        ActionListener optionListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ExamFrame.this.clear_OP_Button();
-                JButton jButton = (JButton) e.getSource();      /*可获取到调用事件的源对象*/
-                jButton.setBackground(Color.yellow);
-
-                int num = Integer.parseInt(currentNumField.getText());
-                answers[num-1] = jButton.getText();
-            }
-        };
-
         aButton.addActionListener(optionListener);
         bButton.addActionListener(optionListener);
         cButton.addActionListener(optionListener);
         dButton.addActionListener(optionListener);
 
-
     }
+
+
+    /**
+     * 初始化页面*/
     protected void init(){
         int size = examController.getQuestions().size();        /*问题总数*/
         answers = new String[size];         /*设置答案存储的String数组*/
@@ -291,8 +292,9 @@ public class ExamFrame extends BaseFrame {
 
     }
 
-
-    /*展示分页信息*/
+    /**
+    * 展示分页信息
+     */
     public void showPageMsg(PageMessage pageMessage,int i){
 
         int count = 0;
@@ -326,19 +328,17 @@ public class ExamFrame extends BaseFrame {
 
             unfinishedField.setText( String.valueOf( Integer.parseInt(totalCountField.getText()) - i ) );*/
         } else if (pageMessage.getCode() == 300){
-            int response = JOptionPane.showConfirmDialog(ExamFrame.this,"已经没有题了,是否提交");
-            if (response == 0){
-                JOptionPane.showMessageDialog(ExamFrame.this,"提交成功");
-            }
+            JOptionPane.showMessageDialog(ExamFrame.this,"没有下一题了");
         } else {
-            JOptionPane.showMessageDialog(ExamFrame.this,"没有上一题");
+            JOptionPane.showMessageDialog(ExamFrame.this,"没有上一题了");
         }
 
 
 
     }
 
-    /* 清空页面数据 */
+    /**
+     * 清空页面数据 */
     public void emptyAll(){
         examArea.setText("");
         currentNumField.setText("");
@@ -347,6 +347,9 @@ public class ExamFrame extends BaseFrame {
         clear_OP_Button();
     }
 
+    /**
+     * 清理 选项按钮 上的属性
+     */
     public void clear_OP_Button(){
         aButton.setBackground(null);
         bButton.setBackground(null);
@@ -354,7 +357,8 @@ public class ExamFrame extends BaseFrame {
         dButton.setBackground(null);
     }
 
-    /*计算成绩*/
+    /**
+     * 计算成绩*/
     public int checkAnswer(){
         List<Question> list = examController.getQuestions();
 
@@ -380,6 +384,32 @@ public class ExamFrame extends BaseFrame {
         return this.score;
     }
 
+    /**
+    * 显示当前题目选择过的答案*/
+    public void showChoice(){
+        String answer = answers[Integer.parseInt(currentNumField.getText()) - 1];
+        try {
+            switch (answer) {
+                case "A":
+                    aButton.setBackground(Color.yellow);
+                    break;
+                case "B":
+                    bButton.setBackground(Color.yellow);
+                    break;
+                case "C":
+                    cButton.setBackground(Color.yellow);
+                    break;
+                case "D":
+                    dButton.setBackground(Color.yellow);
+                    break;
+                default:
+                    break;
+            }
+        } catch (NullPointerException e){
+
+        }
+    }
+
     @Override
     protected void setFrameSelf() {
         /*设置布局*/
@@ -392,39 +422,6 @@ public class ExamFrame extends BaseFrame {
         /*设置窗体显示状态*/
         this.setVisible(true);
     }
-
-/*    public void toPage(List<Question> questions,int i){
-
-        if (i>=questions.size()){
-            int response = JOptionPane.showConfirmDialog(ExamFrame.this,"已经没有题了,是否提交");
-            if (response == 0){
-                JOptionPane.showMessageDialog(ExamFrame.this,"提交成功");
-            }
-            return;
-        }
-
-        if (i < 0){
-            JOptionPane.showMessageDialog(ExamFrame.this,"没有上一题");
-            return;
-        }
-
-        this.emptyAll();
-
-        Question question = questions.get(i);
-        examArea.append(i + 1 + "." + question.getQuesStem());
-        examArea.append("\n\nA:" + question.getQuesA());
-        examArea.append("\n\nB:" + question.getQuesB());
-        examArea.append("\n\nC:" + question.getQuesC());
-        examArea.append("\n\nD:" + question.getQuesD());
-
-        currentNumField.setText(String.valueOf(i+1));
-
-        finishedField.setText(String.valueOf(i));
-
-        unfinishedField.setText(String.valueOf(questions.size() - i));
-    }*/
-
-
 
     public static void main(String[] args) {
         ExamFrame examFrame = new ExamFrame("考试页面");

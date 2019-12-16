@@ -30,28 +30,28 @@ public class StudentDaoImpl implements StudentDao {
     public Connection conn = null;
     public PreparedStatement pstmt = null;
 
-    @Override
-    public boolean check() {
-        return false;
-    }
+
 
     @Override
-    public Student queryByAccount(String account) {
+    public Student check(String account,String password) {
         try {
             conn = connectionToDB();
 
-            String sql = "SELECT * FROM tbl_stu where stu_account=?";
+            String sql = "SELECT * FROM tbl_stu where stu_account=? and stu_password=?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1,account);
+            pstmt.setString(2,password);
 
             ResultSet resultSet = pstmt.executeQuery();
 
-            Student student = new Student();
+            Student student = null;
 
             while (resultSet.next()){
+                student = new Student();
                 student.setStuAccount(resultSet.getString("stu_account"));
                 student.setStuPassword(resultSet.getString("stu_password"));
             }
+
             return student;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -68,9 +68,11 @@ public class StudentDaoImpl implements StudentDao {
         return conn;
     }
 
+
+
     public static void main(String[] args) {
         StudentDao studentDao = new StudentDaoImpl();
-        Student student = studentDao.queryByAccount("1840611623");
+        Student student = studentDao.check("1840611623","LSFlsf123");
         System.out.println(student);
     }
 

@@ -12,12 +12,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String Login(String account,String password) {
-        Student student = studentDao.queryByAccount(account);
-        if(student != null && student.getStuPassword().equals(password)){
+        Student student = studentDao.check(account,password);
+        if(student != null){
             return "登录成功";
         } else {
             return "登录失败";
         }
-
     }
 }

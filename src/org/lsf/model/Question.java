@@ -22,6 +22,16 @@ public class Question {
         this.quesCorrect = quesCorrect;
     }
 
+    public Question( String quesStem, String quesA, String quesB, String quesC, String quesD, String quesCorrect) {
+
+        this.quesStem = quesStem;
+        this.quesA = quesA;
+        this.quesB = quesB;
+        this.quesC = quesC;
+        this.quesD = quesD;
+        this.quesCorrect = quesCorrect;
+    }
+
     @Override
     public String toString() {
         return "Question{" +

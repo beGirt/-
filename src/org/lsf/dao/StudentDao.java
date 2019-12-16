@@ -5,8 +5,7 @@ import org.lsf.model.Student;
 public interface StudentDao {
 
 
-    public boolean check();
 
-    public Student queryByAccount(String account);
-
+    public Student check(String account,String password);
+    
 }

@@ -6,6 +6,7 @@ import org.lsf.model.Question;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import static java.sql.DriverManager.getConnection;
 
@@ -75,11 +76,58 @@ public class QuestionDaoImpl implements QuestionDao {
         return null;
     }
 
+    public void Insert(){
+        String t = "";
+
+        String a = "";
+        String b = "";
+        String c = "";
+        String d = "";
+
+        String r = "";
+
+
+        Scanner in = new Scanner(System.in);
+
+        t = in.nextLine();
+        a = in.nextLine();
+        b = in.nextLine();
+        c = in.nextLine();
+        d = in.nextLine();
+        r = in.nextLine();
+
+
+        System.out.println(r + '\n' + c + r);
+//        System.exit(0);
+//        Question question = new Question(t,a,b,c,d,r);
+
+        String sql = "INSERT INTO tbl_Question(ques_stem,ques_A,ques_B,ques_C,ques_D,ques_Correct) VALUES ?,?,?,?,?,?";
+        try {
+            conn = connectionToDB();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setObject(1,t);
+            pstmt.setObject(2,a);
+            pstmt.setObject(3,b);
+            pstmt.setObject(4,c);
+            pstmt.setObject(5,d);
+            pstmt.setObject(6,r);
+            pstmt.execute();
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public static void main(String[] args) {
-        QuestionDao questionDao = new QuestionDaoImpl();
+        /*QuestionDao questionDao = new QuestionDaoImpl();
         List<Question> list = questionDao.queryAllQues();
         for (Question question:list){
             System.out.println(question);
-        }
+        }*/
+        QuestionDaoImpl questionDao = new QuestionDaoImpl();
+        questionDao.Insert();
     }
 }
