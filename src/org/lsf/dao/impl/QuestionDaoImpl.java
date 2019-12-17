@@ -3,10 +3,10 @@ package org.lsf.dao.impl;
 import org.lsf.dao.QuestionDao;
 import org.lsf.model.Question;
 
+import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import static java.sql.DriverManager.getConnection;
 
@@ -59,6 +59,27 @@ public class QuestionDaoImpl implements QuestionDao {
                 String ques_D = resultSet.getString("ques_D");
                 String ques_Correct =resultSet.getString("ques_Correct");
                 Question question = new Question(Integer.parseInt(ques_id),ques_stem,ques_A,ques_B,ques_C,ques_D,ques_Correct);
+
+
+                /*获取题目中的图片信息 ， 没有则设置为null*/
+                try {
+                    InputStream inputStream = resultSet.getBlob("Picture").getBinaryStream();
+                    byte[] b = new byte[1024];
+                    int a;
+
+                    while ( (a = inputStream.read(b)) != -1  ){
+                    }
+                    for (int i = 0;i < 100;i++){
+                        System.out.println(b[i]);
+                    }
+                    question.setPhoto(b);
+                } catch (NullPointerException e){
+                    question.setPhoto(null);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
                 list.add(question);
             }
             return list;
@@ -71,55 +92,39 @@ public class QuestionDaoImpl implements QuestionDao {
     }
 
     @Override
-    public List<Question> queryByNum(int number) {
-
-        return null;
-    }
-
-    public void Insert(){
-        String t = "";
-
-        String a = "";
-        String b = "";
-        String c = "";
-        String d = "";
-
-        String r = "";
-
-
-        Scanner in = new Scanner(System.in);
-
-        t = in.nextLine();
-        a = in.nextLine();
-        b = in.nextLine();
-        c = in.nextLine();
-        d = in.nextLine();
-        r = in.nextLine();
-
-
-        System.out.println(r + '\n' + c + r);
-//        System.exit(0);
-//        Question question = new Question(t,a,b,c,d,r);
-
-        String sql = "INSERT INTO tbl_Question(ques_stem,ques_A,ques_B,ques_C,ques_D,ques_Correct) VALUES ?,?,?,?,?,?";
+    public void updatePicture() {
         try {
-            conn = connectionToDB();
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setObject(1,t);
-            pstmt.setObject(2,a);
-            pstmt.setObject(3,b);
-            pstmt.setObject(4,c);
-            pstmt.setObject(5,d);
-            pstmt.setObject(6,r);
-            pstmt.execute();
+            File file = new File("D:\\我的文件_01\\图片\\linux_logo.jpg");
+            FileInputStream fi = new FileInputStream(file);
 
+
+            conn = connectionToDB();
+            String sql = "UPDATE tbl_Question SET picture = ? WHERE ques_id = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setObject(1,fi);
+            pstmt.setObject(2,4);
+            /*执行*/
+            int f = pstmt.executeUpdate();
+
+            if (f > 0){
+                System.out.println("插入成功");
+            } else {
+                System.out.println("插入失败");
+            }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
+    @Override
+    public List<Question> queryByNum(int number) {
+
+        return null;
+    }
 
     public static void main(String[] args) {
         /*QuestionDao questionDao = new QuestionDaoImpl();
@@ -127,7 +132,8 @@ public class QuestionDaoImpl implements QuestionDao {
         for (Question question:list){
             System.out.println(question);
         }*/
-        QuestionDaoImpl questionDao = new QuestionDaoImpl();
-        questionDao.Insert();
+        QuestionDao questionDao = new QuestionDaoImpl();
+//        questionDao.updatePicture();
+        questionDao.queryAllQues();
     }
 }

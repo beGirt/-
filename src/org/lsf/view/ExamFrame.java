@@ -12,7 +12,6 @@ import java.util.List;
 
 public class ExamFrame extends BaseFrame {
 
-//    private QuestionService questionService = new QuestionServiceImpl();
     private ExamController examController = new ExamController();
 
     private String[] answers;       /*答案数组下标从0开始*/
@@ -321,9 +320,24 @@ public class ExamFrame extends BaseFrame {
             examArea.append("\n\nC:" + question.getQuesC());
             examArea.append("\n\nD:" + question.getQuesD());
             currentNumField.setText(String.valueOf(i));
+//            Icon icon = new ImageIcon(question.getPhoto());
+            /*如果有图片 则展示图片*/
+            if (question.getPhoto() != null) {
+                byte[] b = question.getPhoto();
 
+                ImageIcon imageIcon = new ImageIcon(b,"JPG");
 
-/*
+                imageIcon.setImage(imageIcon.getImage().getScaledInstance(280,230,Image.SCALE_DEFAULT));
+                pictureLabel.setIcon(imageIcon);
+
+                JLabel jLabel = new JLabel(imageIcon);
+                /*
+                Icon imageIcon = new ImageIcon(question.getPhoto());
+                pictureLabel.setIcon(imageIcon);
+*/
+            }
+
+            /*
             finishedField.setText(String.valueOf(i));
 
             unfinishedField.setText( String.valueOf( Integer.parseInt(totalCountField.getText()) - i ) );*/
@@ -333,7 +347,7 @@ public class ExamFrame extends BaseFrame {
             JOptionPane.showMessageDialog(ExamFrame.this,"没有上一题了");
         }
 
-
+        /*实现图片的展示*/
 
     }
 

@@ -29,7 +29,7 @@ public class ExamController {
     }
 
 
-    /* 获取 第 i 页 的数据 , 返回类型为PageMessage */
+    /* 获取 第 i 道题(页) 的数据 , 返回类型为PageMessage */
     public PageMessage toPage(int i){
         if (i > questions.size()){
             return PageMessage.fail_2();

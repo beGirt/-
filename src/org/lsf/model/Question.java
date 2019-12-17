@@ -8,6 +8,8 @@ public class Question {
     private String quesC;
     private String quesD;
     private String quesCorrect;
+    private byte[] photo;
+
 
     public Question() {
     }
@@ -43,6 +45,14 @@ public class Question {
                 ", quesD='" + quesD + '\'' +
                 ", quesCorrect='" + quesCorrect + '\'' +
                 '}';
+    }
+
+    public byte[] getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
     }
 
     public int getQuesId() {
