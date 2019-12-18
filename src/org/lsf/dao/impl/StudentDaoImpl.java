@@ -62,6 +62,25 @@ public class StudentDaoImpl implements StudentDao {
         return null;
     }
 
+    @Override
+    public void UpdateScore(String account,int score) {
+        try {
+            conn = connectionToDB();
+            String sql = "UPDATE tbl_stu SET stu_score = ? WHERE stu_account = ?";
+            pstmt = conn.prepareStatement(sql);
+
+            pstmt.setObject(1,score);
+            pstmt.setObject(2,account);
+
+            pstmt.execute();
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public Connection connectionToDB() throws ClassNotFoundException, SQLException {
         Class.forName(JDBC_DRIVER);
         conn = getConnection(DB_URL,USER,PASS);
@@ -72,8 +91,11 @@ public class StudentDaoImpl implements StudentDao {
 
     public static void main(String[] args) {
         StudentDao studentDao = new StudentDaoImpl();
+    /*
         Student student = studentDao.check("1840611623","LSFlsf123");
         System.out.println(student);
+    */
+        studentDao.UpdateScore("1840611623",30);
     }
 
 }

@@ -3,9 +3,9 @@ package org.lsf.service.impl;
 import org.lsf.dao.StudentDao;
 import org.lsf.dao.impl.StudentDaoImpl;
 import org.lsf.model.Student;
-import org.lsf.service.UserService;
+import org.lsf.service.StudentService;
 
-public class UserServiceImpl implements UserService {
+public class StudentServiceImpl implements StudentService {
 
     private StudentDao studentDao = new StudentDaoImpl();
 
@@ -18,5 +18,10 @@ public class UserServiceImpl implements UserService {
         } else {
             return "登录失败";
         }
+    }
+
+    @Override
+    public void UpdateStuScore(String account, int score) {
+        studentDao.UpdateScore(account,score);
     }
 }

@@ -1,7 +1,7 @@
 package org.lsf.view;
 
-import org.lsf.service.UserService;
-import org.lsf.service.impl.UserServiceImpl;
+import org.lsf.service.StudentService;
+import org.lsf.service.impl.StudentServiceImpl;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class LoginFrame extends BaseFrame{
-    UserService userService = new UserServiceImpl();
+    StudentService studentService = new StudentServiceImpl();
 
 
     private JPanel mainPanel = new JPanel();
@@ -106,14 +106,14 @@ public class LoginFrame extends BaseFrame{
                 * 如果登录成功,跳转到考试页面
                 * 如果登录失败,弹出警告框
                 * */
-                String result = userService.Login(account,password);
+                String result = studentService.Login(account,password);
                 if (result.equals("登录成功")){
 //                    JOptionPane.showMessageDialog(LoginFrame.this,"即将进入考试,请做好准备!!!");
                     /*实现跳转*/
                     int response = JOptionPane.showConfirmDialog(LoginFrame.this,"确定进入考试?");
                     if (response == 0) {
                         LoginFrame.this.setVisible(false);  /*登录窗口隐藏 反射机制*/
-                        new ExamFrame("考试页面");
+                        new ExamFrame("考试页面",account);
                     } else {
                         accountField.setText("");
                         passwordField.setText("");

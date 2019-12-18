@@ -3,6 +3,8 @@ package org.lsf.view;
 import org.lsf.Controller.ExamController;
 import org.lsf.model.PageMessage;
 import org.lsf.model.Question;
+import org.lsf.service.StudentService;
+import org.lsf.service.impl.StudentServiceImpl;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +15,11 @@ import java.util.List;
 public class ExamFrame extends BaseFrame {
 
     private ExamController examController = new ExamController();
+    private StudentService studentService = new StudentServiceImpl();
+    private String account;
+
+    /*用于控制时间,以秒为单位*/
+    private int time = 90;
 
     private String[] answers;       /*答案数组下标从0开始*/
     private int score;
@@ -35,6 +42,14 @@ public class ExamFrame extends BaseFrame {
         /*构建初始化页面中的数据*/
         this.init();
     }
+
+
+    public ExamFrame(String title, String account){
+        this(title);
+        this.account = account;
+    }
+
+    private TimeController timeController = new TimeController();
 
     /*添加三个 JPanel 面板进行布局的分割*/
     private JPanel mainPanel = new JPanel();        /*负责问题的展示*/
@@ -256,10 +271,10 @@ public class ExamFrame extends BaseFrame {
 
                     /*
                     * 存储学生成绩到数据库*/
+                    studentService.UpdateStuScore(account,score);
 
-
-
-                    JOptionPane.showMessageDialog(ExamFrame.this,"提交成功,成绩为:"+score);
+                    /*显示提示信息*/
+                    JOptionPane.showMessageDialog(ExamFrame.this,account+"提交成功,成绩为:"+score);
                     ExamFrame.this.setVisible(false);
                     System.exit(0);
                 }
@@ -270,6 +285,41 @@ public class ExamFrame extends BaseFrame {
         cButton.addActionListener(optionListener);
         dButton.addActionListener(optionListener);
 
+    }
+
+    @Override
+    protected void setFrameSelf() {
+        /*设置布局*/
+        this.setSize(1000,600);
+        this.setLocationRelativeTo(null);
+        /*设置点击关闭退出程序*/
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        /*设置窗体大小不可拖拽*/
+        this.setResizable(false);
+        /*设置窗体显示状态*/
+        this.setVisible(true);
+
+        /*计时器启动*/
+        timeController.start();
+
+
+    }
+
+
+    /*设计一个内部类,用于控制时间的变化*/
+    private class TimeController extends Thread{
+        @Override
+        public void run() {
+            while (true){
+
+                realTimeLabel.setText(String.valueOf(--time));
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 
@@ -288,6 +338,9 @@ public class ExamFrame extends BaseFrame {
 
         PageMessage pageMessage = examController.toPage(1);
         ExamFrame.this.showPageMsg(pageMessage,1);
+
+        /*设置初始时间*/
+        realTimeLabel.setText(String.valueOf(time));
 
     }
 
@@ -320,27 +373,20 @@ public class ExamFrame extends BaseFrame {
             examArea.append("\n\nC:" + question.getQuesC());
             examArea.append("\n\nD:" + question.getQuesD());
             currentNumField.setText(String.valueOf(i));
-//            Icon icon = new ImageIcon(question.getPhoto());
             /*如果有图片 则展示图片*/
             if (question.getPhoto() != null) {
-                byte[] b = question.getPhoto();
 
-                ImageIcon imageIcon = new ImageIcon(b,"JPG");
+                byte[] b = question.getPhoto();         /*从对象中获取 二进制数组 表示的图片*/
+                ImageIcon imageIcon = new ImageIcon(b); /*调用参数为byte[] 的构造方法*/
 
-                imageIcon.setImage(imageIcon.getImage().getScaledInstance(280,230,Image.SCALE_DEFAULT));
+                /*设置图片的布局格式*/
+                imageIcon.setImage( imageIcon.getImage().getScaledInstance(280,230,Image.SCALE_DEFAULT) );
+
+                /*添加imageIcon到Label组件上*/
                 pictureLabel.setIcon(imageIcon);
-
-                JLabel jLabel = new JLabel(imageIcon);
-                /*
-                Icon imageIcon = new ImageIcon(question.getPhoto());
-                pictureLabel.setIcon(imageIcon);
-*/
             }
 
-            /*
-            finishedField.setText(String.valueOf(i));
 
-            unfinishedField.setText( String.valueOf( Integer.parseInt(totalCountField.getText()) - i ) );*/
         } else if (pageMessage.getCode() == 300){
             JOptionPane.showMessageDialog(ExamFrame.this,"没有下一题了");
         } else {
@@ -358,6 +404,7 @@ public class ExamFrame extends BaseFrame {
         currentNumField.setText("");
         finishedField.setText("");
         unfinishedField.setText("");
+        pictureLabel.setIcon(null);
         clear_OP_Button();
     }
 
@@ -424,18 +471,36 @@ public class ExamFrame extends BaseFrame {
         }
     }
 
-    @Override
-    protected void setFrameSelf() {
-        /*设置布局*/
-        this.setSize(1000,600);
-        this.setLocationRelativeTo(null);
-        /*设置点击关闭退出程序*/
-        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        /*设置窗体大小不可拖拽*/
-        this.setResizable(false);
-        /*设置窗体显示状态*/
-        this.setVisible(true);
+    public StringBuilder changeTime(int time){
+        /*转换为 小时:分钟:秒*/
+        int hour = time/60;
+        int minute = time%60;
+        int second = time-minute*10;
+        /*拼串*/
+        StringBuilder result = new StringBuilder();
+        if (hour >= 0 && hour < 10){
+            result.append("0");
+        }
+        result.append(hour);
+
+        result.append(":");
+
+        if (minute >= 0 && minute < 10){
+            result.append("0");
+        }
+        result.append(minute);
+        result.append(":");
+
+        if (second >= 0 && second < 10){
+            result.append("0");
+        }
+        result.append(second);
+
+
+        return
     }
+
+
 
     public static void main(String[] args) {
         ExamFrame examFrame = new ExamFrame("考试页面");

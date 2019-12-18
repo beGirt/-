@@ -1,5 +1,6 @@
 package org.lsf.service;
 
-public interface UserService {
+public interface StudentService {
     public abstract String Login(String account,String password);
+    public void UpdateStuScore(String account,int score);
 }

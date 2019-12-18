@@ -60,19 +60,17 @@ public class QuestionDaoImpl implements QuestionDao {
                 String ques_Correct =resultSet.getString("ques_Correct");
                 Question question = new Question(Integer.parseInt(ques_id),ques_stem,ques_A,ques_B,ques_C,ques_D,ques_Correct);
 
-
                 /*获取题目中的图片信息 ， 没有则设置为null*/
                 try {
                     InputStream inputStream = resultSet.getBlob("Picture").getBinaryStream();
                     byte[] b = new byte[1024];
                     int a;
-
+                    ByteArrayOutputStream fileOutputStream = new ByteArrayOutputStream();
                     while ( (a = inputStream.read(b)) != -1  ){
+                        fileOutputStream.write(b, 0, a);
                     }
-                    for (int i = 0;i < 100;i++){
-                        System.out.println(b[i]);
-                    }
-                    question.setPhoto(b);
+                    byte[] b2 = fileOutputStream.toByteArray();
+                    question.setPhoto(b2);
                 } catch (NullPointerException e){
                     question.setPhoto(null);
                 } catch (IOException e) {
@@ -89,6 +87,17 @@ public class QuestionDaoImpl implements QuestionDao {
             e.printStackTrace();
         }
         return null ;
+    }
+
+    public int getValidLength(byte[] bytes){
+        int i = 0;
+        if (null == bytes || 0 == bytes.length)
+            return i ;
+        for (; i < bytes.length; i++) {
+            if (bytes[i] == '\0')
+                break;
+        }
+        return i + 1;
     }
 
     @Override
