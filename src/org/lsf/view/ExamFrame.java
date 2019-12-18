@@ -19,7 +19,7 @@ public class ExamFrame extends BaseFrame {
     private String account;
 
     /*用于控制时间,以秒为单位*/
-    private int time = 90;
+    private int time = 60;
 
     private String[] answers;       /*答案数组下标从0开始*/
     private int score;
@@ -259,7 +259,6 @@ public class ExamFrame extends BaseFrame {
                 answers[num-1] = jButton.getText();
             }
         };
-
         nextButton.addActionListener(pageButton);
         preButton.addActionListener(pageButton);
         submitButton.addActionListener(new ActionListener() {
@@ -272,6 +271,9 @@ public class ExamFrame extends BaseFrame {
                     /*
                     * 存储学生成绩到数据库*/
                     studentService.UpdateStuScore(account,score);
+                    //                        Thread.sleep(200);
+                    // 发出中断线程信号
+                    timeController.interrupt();
 
                     /*显示提示信息*/
                     JOptionPane.showMessageDialog(ExamFrame.this,account+"提交成功,成绩为:"+score);
@@ -301,27 +303,69 @@ public class ExamFrame extends BaseFrame {
 
         /*计时器启动*/
         timeController.start();
-
+//        timeController.run();
 
     }
-
 
     /*设计一个内部类,用于控制时间的变化*/
     private class TimeController extends Thread{
         @Override
         public void run() {
-            while (true){
+            int hour = time/60;
+            int minute = time%60;
+            int second = 0;
+            String time_string = ExamFrame.this.showTime(hour,minute,second);
 
-                realTimeLabel.setText(String.valueOf(--time));
+            while (!this.isInterrupted()){
+                /*展示时间*/
+                realTimeLabel.setText(time_string);
+//                System.out.println(time_string);
+
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    this.interrupt();
                 }
+
+
+                /*更改时间*/
+                time_string = ExamFrame.this.changeTime(hour,minute,second);
+
+                /*剩下三十秒时显示红色*/
+                if (hour == 0 && minute == 0 && second < 30){
+                    realTimeLabel.setForeground(Color.red);
+                }
+
+                if (time_string == null){/*倒计时结束*/
+
+                    JOptionPane.showMessageDialog(ExamFrame.this,"时间用完了,请交卷");
+                    int score = ExamFrame.this.checkAnswer();
+                    /*
+                     * 存储学生成绩到数据库*/
+                    studentService.UpdateStuScore(account,score);
+
+                    /*显示提示信息*/
+                    JOptionPane.showMessageDialog(ExamFrame.this,account+"提交成功,成绩为:"+score);
+                    ExamFrame.this.setVisible(false);
+                    System.exit(0);
+
+                    break;
+                }
+
+                int a[] = ExamFrame.this.parseTime(time_string);
+                hour = a[0];
+                minute = a[1];
+                second = a[2];
+
+
+                if(Thread.currentThread().isInterrupted()) {
+                    System.out.println("The thread is interrupted!");
+                    break;
+                }
+
             }
         }
     }
-
 
     /**
      * 初始化页面*/
@@ -471,18 +515,35 @@ public class ExamFrame extends BaseFrame {
         }
     }
 
-    public StringBuilder changeTime(int time){
+    public String changeTime(Integer hour,Integer minute,Integer second){
+        if (second > 0){
+            second--;
+        } else {
+            if (minute > 0){
+                minute--;
+                second = 59;
+            } else {
+                if (hour > 0){
+                    hour--;
+                    minute = 59;
+                    second = 59;
+                } else {
+                    return null;
+                }
+            }
+        }
+        return showTime(hour,minute,second);
+    }
+
+    /*转化为XX:XX:XX的格式*/
+    public String showTime(int hour,int minute,int second){      /*time 是以分钟为单位的*/
         /*转换为 小时:分钟:秒*/
-        int hour = time/60;
-        int minute = time%60;
-        int second = time-minute*10;
         /*拼串*/
         StringBuilder result = new StringBuilder();
         if (hour >= 0 && hour < 10){
             result.append("0");
         }
         result.append(hour);
-
         result.append(":");
 
         if (minute >= 0 && minute < 10){
@@ -495,14 +556,23 @@ public class ExamFrame extends BaseFrame {
             result.append("0");
         }
         result.append(second);
-
-
-        return
+        return result.toString();
     }
 
+    /*解析time字符串*/
+    public int[] parseTime(String time){
+        String[] s = time.split(":");
+        int hour = Integer.parseInt(s[0]);
+        int minute = Integer.parseInt(s[1]);
+        int second = Integer.parseInt(s[2]);
+        int[] a = {hour,minute,second};
+        return a;
+
+    }
 
 
     public static void main(String[] args) {
         ExamFrame examFrame = new ExamFrame("考试页面");
     }
+
 }

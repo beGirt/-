@@ -103,7 +103,7 @@ public class QuestionDaoImpl implements QuestionDao {
     @Override
     public void updatePicture() {
         try {
-            File file = new File("D:\\我的文件_01\\图片\\linux_logo.jpg");
+            File file = new File("D:\\我的文件_01\\图片\\冯诺依曼.jpg");
             FileInputStream fi = new FileInputStream(file);
 
 
@@ -111,7 +111,7 @@ public class QuestionDaoImpl implements QuestionDao {
             String sql = "UPDATE tbl_Question SET picture = ? WHERE ques_id = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setObject(1,fi);
-            pstmt.setObject(2,4);
+            pstmt.setObject(2,6);
             /*执行*/
             int f = pstmt.executeUpdate();
 
@@ -143,6 +143,6 @@ public class QuestionDaoImpl implements QuestionDao {
         }*/
         QuestionDao questionDao = new QuestionDaoImpl();
 //        questionDao.updatePicture();
-        questionDao.queryAllQues();
+//        questionDao.queryAllQues();
     }
 }

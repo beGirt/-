@@ -10,4 +10,5 @@ public interface StudentDao {
 
     /*根据学号修改成绩*/
     public void UpdateScore(String account,int score);
+
 }
