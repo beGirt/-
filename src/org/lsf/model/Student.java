@@ -5,8 +5,39 @@ public class Student {
     private String stuAccount;
     private String stuPassword;
     private String stuName;
-    private boolean gender;
+    private boolean gender;         /*true : 男 ; false : 女*/
     private String phoneNumber;
+    private int stuScore;
+
+
+
+    /*无参构造器*/
+    public Student() {
+    }
+
+    public Student(String stuAccount, String stuPassword, String stuName) {
+        this.stuAccount = stuAccount;
+        this.stuPassword = stuPassword;
+        this.stuName = stuName;
+    }
+
+    public Student(int stuId, String stuAccount, String stuPassword, String stuName, boolean gender, String phoneNumber, int stuScore) {
+        this.stuId = stuId;
+        this.stuAccount = stuAccount;
+        this.stuPassword = stuPassword;
+        this.stuName = stuName;
+        this.gender = gender;
+        this.phoneNumber = phoneNumber;
+        this.stuScore = stuScore;
+    }
+
+    public int getStuScore() {
+        return stuScore;
+    }
+
+    public void setStuScore(int stuScore) {
+        this.stuScore = stuScore;
+    }
 
     public int getStuId() {
         return stuId;

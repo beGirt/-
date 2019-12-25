@@ -13,6 +13,9 @@ public interface QuestionDao {
     /*获取全部题目*/
     public List<Question> queryAllQues();
 
+    /*查出number道题目*/
+    public List<Question> queryQuesByNum(int number);
+
     /*增删改查实现*/
 
 

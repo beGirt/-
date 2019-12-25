@@ -24,4 +24,25 @@ public class StudentServiceImpl implements StudentService {
     public void UpdateStuScore(String account, int score) {
         studentDao.UpdateScore(account,score);
     }
+
+    @Override
+    public boolean insertStudent(Student student) {
+
+        /*String reg = "^(([\u4e00-\u9fa5]{2,8})|([a-zA-Z]{2,16}))$";
+        boolean isMatch = Pattern.matches(reg,student.getStuAccount());
+        if (!isMatch){
+            System.out.println("姓名有误");
+            return false;
+        }
+        if (student.getStuAccount().length() != 10){
+            System.out.println("账号有误");
+            return false;
+        }*/
+        if (studentDao.queryStudentByAccount(student.getStuAccount()) == null){
+            studentDao.addStudent(student);
+            return true;
+        } else {/*账号重复,插入失败*/
+            return false;
+        }
+    }
 }

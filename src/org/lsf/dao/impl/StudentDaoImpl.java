@@ -18,7 +18,7 @@ public class StudentDaoImpl implements StudentDao {
      * database URL
      */
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://127.0.0.1:7766/DB_Examination";
+    static final String DB_URL = "jdbc:mysql://127.0.0.1:7766/DB_Examination?useUnicode=true&characterEncoding=utf8";
 
     /*
      * 设置用户信息变量
@@ -30,6 +30,12 @@ public class StudentDaoImpl implements StudentDao {
     public Connection conn = null;
     public PreparedStatement pstmt = null;
 
+
+    public Connection connectionToDB() throws ClassNotFoundException, SQLException {
+        Class.forName(JDBC_DRIVER);
+        conn = getConnection(DB_URL,USER,PASS);
+        return conn;
+    }
 
 
     @Override
@@ -81,13 +87,95 @@ public class StudentDaoImpl implements StudentDao {
         }
     }
 
-    public Connection connectionToDB() throws ClassNotFoundException, SQLException {
-        Class.forName(JDBC_DRIVER);
-        conn = getConnection(DB_URL,USER,PASS);
-        return conn;
+    @Override
+    public void addStudent(Student student) {/*简单存储 账号\密码\姓名*/
+        try {
+            conn = connectionToDB();
+            String sql = "INSERT INTO tbl_stu(stu_account,stu_password,stu_name) VALUES (?,?,?)";
+
+            pstmt = conn.prepareStatement(sql);
+
+            pstmt.setObject(1,student.getStuAccount());
+            pstmt.setObject(2,student.getStuPassword());
+            pstmt.setObject(3,student.getStuName());
+
+            pstmt.execute();
+
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
+    @Override
+    public void deleteStudentByAccount(String account) {
+        if (this.queryStudentByAccount(account) == null){
+            System.out.println("删除失败,查无此人");
+        } else {
+            try {
+                conn = connectionToDB();
+                String sql = "DELETE FROM tbl_stu WHERE stu_account = ?";
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setObject(1,account);
+                pstmt.execute();
+                System.out.println("删除成功");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
+        }
+    }
+
+    @Override
+    public void updateStudentByAccount(Student student, String account) {
+
+    }
+
+    @Override
+    public Student queryStudentByAccount(String account) {
+        Student student = null;
+        try {
+            conn = connectionToDB();
+            String sql = "SELECT * FROM tbl_stu WHERE stu_account = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setObject(1,account);
+
+            ResultSet resultSet = pstmt.executeQuery();
+
+            while (resultSet.next()){
+                student = this.packResultSet(resultSet);
+            }
+
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return student;
+    }
+
+    /*封装结果集中的数据为Student对象*/
+    public Student packResultSet(ResultSet resultSet) throws SQLException {
+        int stu_id = resultSet.getInt("stu_id");
+        String stu_account = resultSet.getString("stu_account");
+        String stu_password = resultSet.getString("stu_password");
+        String stu_name = resultSet.getString("stu_name");
+        String tmp  = resultSet.getString("stu_account");
+        boolean gender = false;
+        if (tmp.equals("男")){
+            gender = true;
+        }
+        String PhoneNumber = resultSet.getString("PhoneNumber");
+        int score = resultSet.getInt("stu_score");
+
+        return new Student(stu_id,stu_account,stu_password,stu_name,gender,PhoneNumber,score);
+
+    }
 
     public static void main(String[] args) {
         StudentDao studentDao = new StudentDaoImpl();

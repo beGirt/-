@@ -16,4 +16,20 @@ public class QuestionServiceImpl implements QuestionService {
         List<Question> questions = questionDao.queryAllQues();
         return questions;
     }
+
+    public List<Question> queryQuesByNumber(int number){
+        List<Question> list = questionDao.queryQuesByNum(number);
+        if (list == null || list.size() < number){
+            return null;
+        } else {
+            return list;
+        }
+    }
+
+
+    public static void main(String[] args) {
+        /*QuestionService questionService = new QuestionServiceImpl();
+        List<Question> list = questionService.queryQuesByNumber(2);
+        System.out.println(list.get(1));*/
+    }
 }

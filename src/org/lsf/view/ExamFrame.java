@@ -115,7 +115,7 @@ public class ExamFrame extends BaseFrame {
 
         /*
         * */
-        mainPanel.setBackground(Color.LIGHT_GRAY);
+        mainPanel.setBackground(Color.WHITE);
 /*
         mainPanel.setBounds(16,10,650,450);
         mainPanel.setBorder(BorderFactory.createLineBorder(Color.red));
@@ -126,7 +126,10 @@ public class ExamFrame extends BaseFrame {
         examScroll_Pane.setBounds(16,10,650,450);
         examArea.setFont(new Font("黑体",Font.BOLD,25));
         examArea.setEnabled(false);         /*文本域不可编辑*/
-
+        examScroll_Pane.setBackground(Color.WHITE);
+        examArea.setBackground(Color.WHITE);
+        examScroll_Pane.setForeground(Color.black);
+//        examScroll_Pane.setForeground(Color.blue);
 
         /*
         * message区域
@@ -275,8 +278,16 @@ public class ExamFrame extends BaseFrame {
                     // 发出中断线程信号
                     timeController.interrupt();
 
+
+                    /*判断是否及格*/
+                    if (score >= answers.length * 10 * 0.6){
+                        JOptionPane.showMessageDialog(ExamFrame.this,"你及格了");
+                    }
+
                     /*显示提示信息*/
                     JOptionPane.showMessageDialog(ExamFrame.this,account+"提交成功,成绩为:"+score);
+
+
                     ExamFrame.this.setVisible(false);
                     System.exit(0);
                 }
@@ -359,7 +370,7 @@ public class ExamFrame extends BaseFrame {
 
 
                 if(Thread.currentThread().isInterrupted()) {
-                    System.out.println("The thread is interrupted!");
+//                    System.out.println("The thread is interrupted!");
                     break;
                 }
 

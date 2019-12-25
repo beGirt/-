@@ -11,7 +11,6 @@ public class ExamController {
 
     private QuestionService questionService = new QuestionServiceImpl();
     private List<Question> questions = questionService.queryAll();
-
     public QuestionService getQuestionService() {
         return questionService;
     }
@@ -22,6 +21,14 @@ public class ExamController {
 
     public List<Question> getQuestions() {
         return questions;
+    }
+
+    public List<Question> getQuestionsByNum(int number){
+
+        /*随机获取 number 道题目*/
+
+
+        return null;
     }
 
     public void setQuestions(List<Question> questions) {
