@@ -9,15 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ManagerFrame extends BaseFrame {
-
-    public ManagerFrame(String title){
-        super(title);
-        this.setFontAndSoOn();
-        this.addElement();
-        this.addListener();
-        this.setFrameSelf();
-    }
+public class addStuFrame extends BaseFrame {
 
     StudentService studentService = new StudentServiceImpl();
 
@@ -35,7 +27,15 @@ public class ManagerFrame extends BaseFrame {
     private JButton insertButton = new JButton("插入");
 
 
-    public ManagerFrame(){
+    public addStuFrame(String title){
+        super(title);
+        this.setFontAndSoOn();
+        this.addElement();
+        this.addListener();
+        this.setFrameSelf();
+    }
+
+    public addStuFrame(){
         this.setFontAndSoOn();
         this.addElement();
         this.addListener();
@@ -89,15 +89,15 @@ public class ManagerFrame extends BaseFrame {
                 boolean b2 = account.matches("[0-9]{10}");
                 boolean b3 = password.matches("[a-zA-Z0-9_-]{6,18}");
                 if (!b1){
-                    JOptionPane.showMessageDialog(ManagerFrame.this,"姓名格式不正确,需要 2-5 个中文字符");
+                    JOptionPane.showMessageDialog(addStuFrame.this,"姓名格式不正确,需要 2-5 个中文字符");
                     return;
                 }
                 if (!b2){
-                    JOptionPane.showMessageDialog(ManagerFrame.this,"账号格式不正确,需要10位数字");
+                    JOptionPane.showMessageDialog(addStuFrame.this,"账号格式不正确,需要10位数字");
                     return;
                 }
                 if (!b3){
-                    JOptionPane.showMessageDialog(ManagerFrame.this,"密码格式不正确");
+                    JOptionPane.showMessageDialog(addStuFrame.this,"密码格式不正确");
                     return;
                 }
 
@@ -105,10 +105,10 @@ public class ManagerFrame extends BaseFrame {
 
                 Student student = new Student(account,password,name);
                 if (studentService.insertStudent(student) == true){
-                    JOptionPane.showMessageDialog(ManagerFrame.this,"插入成功");
+                    JOptionPane.showMessageDialog(addStuFrame.this,"插入成功");
                     emptyAll();
                 } else {
-                    JOptionPane.showMessageDialog(ManagerFrame.this,"插入失败!!!该账号已存在");
+                    JOptionPane.showMessageDialog(addStuFrame.this,"插入失败!!!该账号已存在");
                 }
             }
         });
@@ -121,11 +121,12 @@ public class ManagerFrame extends BaseFrame {
         this.setSize(500,340);
         this.setLocationRelativeTo(null);
         /*设置点击关闭退出程序*/
-        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         /*设置窗体大小不可拖拽*/
         this.setResizable(false);
         /*设置窗体显示状态*/
         this.setVisible(true);
+
 
     }
 
@@ -136,6 +137,6 @@ public class ManagerFrame extends BaseFrame {
     }
 
     public static void main(String[] args) {
-        ManagerFrame managerFrame = new ManagerFrame("添加学生信息界面");
+        addStuFrame managerFrame = new addStuFrame("添加学生信息界面");
     }
 }

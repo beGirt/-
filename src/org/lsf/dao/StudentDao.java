@@ -26,4 +26,5 @@ public interface StudentDao {
     /*查*/
     public Student queryStudentByAccount(String account);
 
+    public Student queryStudentByName(String name);
 }

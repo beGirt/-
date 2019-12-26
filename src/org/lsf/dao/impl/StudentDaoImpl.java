@@ -44,6 +44,7 @@ public class StudentDaoImpl implements StudentDao {
             conn = connectionToDB();
 
             String sql = "SELECT * FROM tbl_stu where stu_account=? and stu_password=?";
+
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1,account);
             pstmt.setString(2,password);
@@ -94,7 +95,6 @@ public class StudentDaoImpl implements StudentDao {
             String sql = "INSERT INTO tbl_stu(stu_account,stu_password,stu_name) VALUES (?,?,?)";
 
             pstmt = conn.prepareStatement(sql);
-
             pstmt.setObject(1,student.getStuAccount());
             pstmt.setObject(2,student.getStuPassword());
             pstmt.setObject(3,student.getStuName());
@@ -158,6 +158,27 @@ public class StudentDaoImpl implements StudentDao {
         }
         return student;
     }
+
+    public Student queryStudentByName(String name){
+        Student student = null;
+        try {
+            conn = connectionToDB();
+            String sql = "SELECT * FROM tbl_stu WHERE stu_name = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setObject(1,name);
+            ResultSet resultSet = pstmt.executeQuery();
+            while (resultSet.next()){
+                student = this.packResultSet(resultSet);
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return student;
+    }
+
 
     /*封装结果集中的数据为Student对象*/
     public Student packResultSet(ResultSet resultSet) throws SQLException {

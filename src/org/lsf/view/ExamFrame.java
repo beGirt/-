@@ -239,6 +239,7 @@ public class ExamFrame extends BaseFrame {
 
                 int i;
 
+                /**特殊处理*/
                 if (jButton.getText().equals("上一题")){
                     i = Integer.parseInt(currentNumField.getText()) - 1;
                 } else if (jButton.getText().equals("下一题")){

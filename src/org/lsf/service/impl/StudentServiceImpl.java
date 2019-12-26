@@ -45,4 +45,9 @@ public class StudentServiceImpl implements StudentService {
             return false;
         }
     }
+
+    public Student queryByName(String name){
+        Student student = studentDao.queryStudentByName(name);
+        return student;
+    }
 }
