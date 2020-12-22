@@ -18,13 +18,13 @@ public class QuestionDaoImpl implements QuestionDao {
      * database URL
      */
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://127.0.0.1:7766/DB_Examination?useUnicode=true&characterEncoding=utf8";
+    static final String DB_URL = "jdbc:mysql://118.31.15.23:3306/DB_Examination?useUnicode=true&characterEncoding=utf8";
 
     /*
      * 设置用户信息变量
      * USER and PASS
      */
-    static final String USER = "root";
+    static final String USER = "lsf";
     static final String PASS = "LSFlsf123";
 
     public Connection conn = null;
@@ -134,7 +134,7 @@ public class QuestionDaoImpl implements QuestionDao {
     @Override
     public void updatePicture() {
         try {
-            File file = new File("D:\\我的文件_01\\图片\\冯诺依曼.jpg");
+            File file = new File("/冯诺依曼.jpg");
             FileInputStream fi = new FileInputStream(file);
 
 
@@ -175,5 +175,6 @@ public class QuestionDaoImpl implements QuestionDao {
         QuestionDao questionDao = new QuestionDaoImpl();
 //        questionDao.updatePicture();
 //        questionDao.queryAllQues();
+        questionDao.updatePicture();
     }
 }
