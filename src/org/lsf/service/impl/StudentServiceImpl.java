@@ -11,9 +11,9 @@ public class StudentServiceImpl implements StudentService {
 
 
     @Override
-    public String Login(String account,String password) {
-        Student student = studentDao.check(account,password);
-        if(student != null){
+    public String Login(String account, String password) {
+        Student student = studentDao.check(account, password);
+        if (student != null) {
             return "登录成功";
         } else {
             return "登录失败";
@@ -22,7 +22,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void UpdateStuScore(String account, int score) {
-        studentDao.UpdateScore(account,score);
+        studentDao.UpdateScore(account, score);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class StudentServiceImpl implements StudentService {
             System.out.println("账号有误");
             return false;
         }*/
-        if (studentDao.queryStudentByAccount(student.getStuAccount()) == null){
+        if (studentDao.queryStudentByAccount(student.getStuAccount()) == null) {
             studentDao.addStudent(student);
             return true;
         } else {/*账号重复,插入失败*/
@@ -46,8 +46,13 @@ public class StudentServiceImpl implements StudentService {
         }
     }
 
-    public Student queryByName(String name){
+    public Student queryByName(String name) {
         Student student = studentDao.queryStudentByName(name);
         return student;
+    }
+
+    @Override
+    public int deleteById(int stuId) {
+        return studentDao.deleteStudentById(stuId);
     }
 }

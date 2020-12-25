@@ -20,6 +20,9 @@ public interface StudentDao {
     /*删*/
     public void deleteStudentByAccount(String account);
 
+    /*删*/
+    public int deleteStudentById(int stuId);
+
     /*改*/
     public void updateStudentByAccount(Student student,String account);
 

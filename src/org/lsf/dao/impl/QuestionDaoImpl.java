@@ -7,6 +7,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import static java.sql.DriverManager.getConnection;
 
@@ -38,8 +39,8 @@ public class QuestionDaoImpl implements QuestionDao {
         String ques_B = resultSet.getString("ques_B");
         String ques_C = resultSet.getString("ques_C");
         String ques_D = resultSet.getString("ques_D");
-        String ques_Correct =resultSet.getString("ques_Correct");
-        Question question = new Question(Integer.parseInt(ques_id),ques_stem,ques_A,ques_B,ques_C,ques_D,ques_Correct);
+        String ques_Correct = resultSet.getString("ques_Correct");
+        Question question = new Question(Integer.parseInt(ques_id), ques_stem, ques_A, ques_B, ques_C, ques_D, ques_Correct);
 
         /*获取题目中的图片信息 ， 没有则设置为null*/
         try {
@@ -47,12 +48,12 @@ public class QuestionDaoImpl implements QuestionDao {
             byte[] b = new byte[1024];
             int a;
             ByteArrayOutputStream fileOutputStream = new ByteArrayOutputStream();
-            while ( (a = inputStream.read(b)) != -1  ){
+            while ((a = inputStream.read(b)) != -1) {
                 fileOutputStream.write(b, 0, a);
             }
             byte[] b2 = fileOutputStream.toByteArray();
             question.setPhoto(b2);
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             question.setPhoto(null);
         } catch (IOException e) {
             e.printStackTrace();
@@ -63,7 +64,7 @@ public class QuestionDaoImpl implements QuestionDao {
 
     public Connection connectionToDB() throws ClassNotFoundException, SQLException {
         Class.forName(JDBC_DRIVER);
-        conn = getConnection(DB_URL,USER,PASS);
+        conn = getConnection(DB_URL, USER, PASS);
         return conn;
     }
 
@@ -73,7 +74,7 @@ public class QuestionDaoImpl implements QuestionDao {
     }
 
     @Override
-    public List<Question> queryAllQues(){
+    public List<Question> queryAllQues() {
         try {
             conn = connectionToDB();
             String sql = "SELECT * FROM tbl_Question ORDER BY rand()";
@@ -81,7 +82,7 @@ public class QuestionDaoImpl implements QuestionDao {
             stmt.execute(sql);
             ResultSet resultSet = stmt.getResultSet();
             List<Question> list = new ArrayList<>();
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 Question question = parseResultSet(resultSet);
                 list.add(question);
             }
@@ -91,20 +92,20 @@ public class QuestionDaoImpl implements QuestionDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null ;
+        return null;
     }
 
     @Override
-    public List<Question> queryQuesByNum(int number){
+    public List<Question> queryQuesByNum(int number) {
         try {
             conn = connectionToDB();
             String sql = "SELECT * FROM tbl_Question ORDER BY rand() LIMIT ?";
             pstmt = conn.prepareStatement(sql);
-            pstmt.setObject(1,number);
+            pstmt.setObject(1, number);
             ResultSet resultSet = pstmt.executeQuery();
             List<Question> list = new ArrayList<>();
 
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 Question question = parseResultSet(resultSet);
                 list.add(question);
             }
@@ -120,10 +121,10 @@ public class QuestionDaoImpl implements QuestionDao {
 
     }
 
-    public int getValidLength(byte[] bytes){
+    public int getValidLength(byte[] bytes) {
         int i = 0;
         if (null == bytes || 0 == bytes.length)
-            return i ;
+            return i;
         for (; i < bytes.length; i++) {
             if (bytes[i] == '\0')
                 break;
@@ -134,19 +135,18 @@ public class QuestionDaoImpl implements QuestionDao {
     @Override
     public void updatePicture() {
         try {
-            File file = new File("/冯诺依曼.jpg");
+            File file = new File("../resources/冯诺依曼.jpg");
             FileInputStream fi = new FileInputStream(file);
-
 
             conn = connectionToDB();
             String sql = "UPDATE tbl_Question SET picture = ? WHERE ques_id = ?";
             pstmt = conn.prepareStatement(sql);
-            pstmt.setObject(1,fi);
-            pstmt.setObject(2,6);
+            pstmt.setObject(1, fi);
+            pstmt.setObject(2, 6);
             /*执行*/
             int f = pstmt.executeUpdate();
 
-            if (f > 0){
+            if (f > 0) {
                 System.out.println("插入成功");
             } else {
                 System.out.println("插入失败");

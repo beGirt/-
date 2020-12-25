@@ -10,4 +10,6 @@ public interface StudentService {
     public boolean insertStudent(Student student);
 
     public Student queryByName(String name);
+
+    public int deleteById(int stuId);
 }

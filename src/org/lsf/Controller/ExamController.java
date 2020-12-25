@@ -27,7 +27,6 @@ public class ExamController {
 
         /*随机获取 number 道题目*/
 
-
         return null;
     }
 
